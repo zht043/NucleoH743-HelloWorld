@@ -1,4 +1,5 @@
 #include "app_main.h"
+#include "usb_device_vcp.h"
 
 #include <iostream>
 #include <vector>
@@ -12,29 +13,23 @@ using namespace std;
 
 extern UART_HandleTypeDef huart3;
 USART serial(&huart3);
+USB_VCP usb;
 
 GPIO blue_led(LD2_GPIO_Port, LD2_Pin);
 GPIO red_led(LD3_GPIO_Port, LD3_Pin);
 GPIO button(USER_Btn_GPIO_Port, USER_Btn_Pin);
 
-//static void util_test(void) {
-//    serial << "=============" << stf::endl;
-//    serial << cos(degree_to_radian(60.0)) << " " << fast_cos(dtr(60.0)) << stf::endl;
-//    serial << fast_inv_sqrt(2.0) << stf::endl;
-//    serial << abs(-5.5) << stf::endl;
-//    serial << map(50.2, from_range(0, 100), to_range(50, 100)) << stf::endl;
-//}
+
 
 void setup(void) {
-
-//    util_test();
-
+	usb.init();
+	usb.send_packet("Hello World USB\n\r");
+    serial << "HelloWorld!" << stf::endl;
 }
 
 void loop0(void) {
-
-    serial << "HelloWorld!" << stf::endl;
-
+	std::string line = usb.read_line();
+	usb.send_packet(line.append("\n\r"));
 }
 
 
